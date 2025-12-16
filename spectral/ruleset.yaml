@@ -1,0 +1,71 @@
+extends:
+  - spectral:oas
+
+rules:
+
+  operation-id-required:
+    description: >
+      Todas las operaciones HTTP deben definir un operationId único y explícito.
+      El operationId es obligatorio para trazabilidad, generación de clientes y testing.
+    severity: error
+    given: "$.paths[*][get,post,put,patch,delete,options,head]"
+    then:
+      field: operationId
+      function: truthy
+
+  operation-summary-required:
+    description: >
+      Cada operación debe definir un summary claro y orientado a negocio.
+    severity: warn
+    given: "$.paths[*][get,post,put,patch,delete]"
+    then:
+      field: summary
+      function: truthy
+
+  responses-must-be-defined:
+    description: >
+      Todas las operaciones deben definir al menos un bloque de responses.
+    severity: error
+    given: "$.paths[*][get,post,put,patch,delete]"
+    then:
+      field: responses
+      function: truthy
+
+  success-response-must-have-schema:
+    description: >
+      Todas las respuestas exitosas (2xx) deben definir un schema explícito.
+      Esto evita contratos ambiguos y tests inestables.
+    severity: error
+    given: "$.paths[*][*].responses[2xx].content[*]"
+    then:
+      field: schema
+      function: truthy
+
+  no-200-without-body:
+    description: >
+      No se permite definir HTTP 200 sin body.
+      Usar 204 si no hay contenido de respuesta.
+    severity: error
+    given: "$.paths[*][*].responses.200"
+    then:
+      field: content
+      function: truthy
+
+  error-responses-must-be-defined:
+    description: >
+      Todas las operaciones deben definir respuestas de error estándar (4xx / 5xx).
+    severity: error
+    given: "$.paths[*][get,post,put,patch,delete]"
+    then:
+      function: defined
+      field: responses.400
+
+  operation-description-required:
+    description: >
+      Cada operación debe tener una description que explique comportamiento,
+      edge cases y reglas relevantes.
+    severity: warn
+    given: "$.paths[*][get,post,put,patch,delete]"
+    then:
+      field: description
+      function: truthy
