@@ -8,80 +8,80 @@
 [![RestAssured](https://img.shields.io/badge/RestAssured-5.4.0-blue?logo=rest&logoColor=white)](https://rest-assured.io/)
 [![Allure](https://img.shields.io/badge/Allure-2.27.0-purple?logo=allure&logoColor=white)](https://docs.qameta.io/allure/)
 
-## 📋 Descripción
+## 📋 Overview
 
-**API Contract Quality Gateway** es una solución de validación de contratos OpenAPI que garantiza la calidad y consistencia de las especificaciones API antes de ejecutar pruebas funcionales.
+**API Contract Quality Gateway** validates OpenAPI contracts so that API specifications are consistent and of good quality before any functional test runs.
 
-El proyecto implementa un **flujo de validación bloqueante** donde:
-1. ✅ Se validan los contratos OpenAPI contra reglas Spectral específicas
-2. 🚫 Si la validación falla, las pruebas funcionales **NO se ejecutan**
-3. ✔️ Si la validación pasa, se ejecutan las pruebas funcionales automáticamente
-
----
-
-## 🎯 Misión Principal
-
-Validar que todos los contratos OpenAPI cumplan con las **normas de calidad definidas en el ruleset de Spectral**, asegurando:
-- Contratos bien documentados y consistentes
-- Operaciones con identificadores únicos
-- Respuestas de error estándar definidas
-- Schemas explícitos en todas las respuestas
-- Trazabilidad y generación de clientes confiable
+The project implements a **blocking validation flow**:
+1. ✅ OpenAPI contracts are validated against a specific Spectral ruleset
+2. 🚫 If validation fails, functional tests **do NOT run**
+3. ✔️ If validation passes, functional tests run automatically
 
 ---
 
-## 📐 Reglas de Validación Spectral
+## 🎯 Main goal
 
-El proyecto utiliza un ruleset personalizado (`spectral/ruleset.yaml`) que extiende las reglas estándar de OpenAPI. Las reglas principales son:
+Make sure every OpenAPI contract meets the **quality rules defined in the Spectral ruleset**, ensuring:
+- Well-documented, consistent contracts
+- Operations with unique identifiers
+- Standard error responses defined
+- Explicit schemas in every response
+- Reliable traceability and client generation
 
-### 🔴 Reglas de Error (Bloqueantes)
+---
 
-| Regla | Descripción | Impacto |
+## 📐 Spectral validation rules
+
+The project uses a custom ruleset (`spectral/ruleset.yaml`) that extends the standard OpenAPI rules. The main rules are:
+
+### 🔴 Error rules (blocking)
+
+| Rule | Description | Impact |
 |-------|-------------|--------|
-| **operation-id-required** | Todas las operaciones HTTP deben definir un `operationId` único y explícito | Obligatorio para trazabilidad y generación de clientes |
-| **responses-must-be-defined** | Todas las operaciones deben definir al menos un bloque `responses` | Evita contratos incompletos |
-| **success-response-must-have-schema** | Las respuestas exitosas (2xx) deben definir un `schema` explícito | Evita contratos ambiguos e inestables |
-| **no-200-without-body** | No se permite HTTP 200 sin `content`. Usar 204 si no hay body | Claridad en la especificación |
-| **error-responses-must-be-defined** | Todas las operaciones deben definir respuestas de error (4xx/5xx) | Manejo consistente de errores |
+| **operation-id-required** | Every HTTP operation must define a unique, explicit `operationId` | Required for traceability and client generation |
+| **responses-must-be-defined** | Every operation must define at least one `responses` block | Prevents incomplete contracts |
+| **success-response-must-have-schema** | Successful (2xx) responses must define an explicit `schema` | Prevents ambiguous, unstable contracts |
+| **no-200-without-body** | HTTP 200 without `content` is not allowed; use 204 when there is no body | Clear specifications |
+| **error-responses-must-be-defined** | Every operation must define error responses (4xx/5xx) | Consistent error handling |
 
-### ⚠️ Reglas de Advertencia (No Bloqueantes)
+### ⚠️ Warning rules (non-blocking)
 
-| Regla | Descripción |
+| Rule | Description |
 |-------|-------------|
-| **operation-summary-required** | Cada operación debe tener un `summary` claro |
-| **operation-description-required** | Cada operación debe tener una `description` detallada |
+| **operation-summary-required** | Every operation must have a clear `summary` |
+| **operation-description-required** | Every operation must have a detailed `description` |
 
 ---
 
-## 📁 Estructura del Proyecto
+## 📁 Project structure
 
 ```
 api-contract-quality-gateway/
-├── contracts/                      # Contratos OpenAPI para validación
-│   ├── meetTheRules.yaml          # ✅ Contrato que PASA validación
-│   └── noMeetTheRules.yaml        # ❌ Contrato que FALLA validación
+├── contracts/                      # OpenAPI contracts to validate
+│   ├── meetTheRules.yaml          # ✅ Contract that PASSES validation
+│   └── noMeetTheRules.yaml        # ❌ Contract that FAILS validation
 ├── spectral/
-│   └── ruleset.yaml               # Reglas personalizadas de Spectral
-├── .spectral.yaml                 # Configuración de Spectral
-├── src/test/java/                 # Pruebas funcionales (JUnit5 + RestAssured)
+│   └── ruleset.yaml               # Custom Spectral rules
+├── .spectral.yaml                 # Spectral configuration
+├── src/test/java/                 # Functional tests (JUnit5 + RestAssured)
 ├── scripts/
-│   └── validateAndExecute.sh       # Script de validación y ejecución
-├── pom.xml                         # Configuración Maven
-├── .env                            # Variables de entorno (local)
-└── README.md                       # Este archivo
+│   └── validateAndExecute.sh       # Validation and execution script
+├── pom.xml                         # Maven configuration
+├── .env                            # Environment variables (local)
+└── README.md                       # This file
 ```
 
 ---
 
-## 🔍 Contratos de Ejemplo
+## 🔍 Example contracts
 
-### ✅ meetTheRules.yaml (VÁLIDO)
+### ✅ meetTheRules.yaml (VALID)
 
-Cumple con todas las reglas de Spectral:
-- ✓ Operación con `operationId: getUserById`
-- ✓ `summary` y `description` definidos
-- ✓ Respuestas (200, 400, 404, 500) con schemas explícitos
-- ✓ Schemas de error definidos en `components`
+Meets every Spectral rule:
+- ✓ Operation with `operationId: getUserById`
+- ✓ `summary` and `description` defined
+- ✓ Responses (200, 400, 404, 500) with explicit schemas
+- ✓ Error schemas defined in `components`
 
 ```yaml
 paths:
@@ -105,13 +105,13 @@ paths:
                 $ref: "#/components/schemas/Error"
 ```
 
-### ❌ noMeetTheRules.yaml (INVÁLIDO)
+### ❌ noMeetTheRules.yaml (INVALID)
 
-Viola varias reglas de Spectral:
-- ✗ Falta `operationId`
-- ✗ Falta `summary` y `description`
-- ✗ Respuesta 200 sin `schema`
-- ✗ Faltan respuestas de error (400, 500)
+Breaks several Spectral rules:
+- ✗ Missing `operationId`
+- ✗ Missing `summary` and `description`
+- ✗ 200 response without `schema`
+- ✗ Missing error responses (400, 500)
 
 ```yaml
 paths:
@@ -122,35 +122,35 @@ paths:
           description: Usuario encontrado
           content:
             application/json:
-              # ❌ FALTA schema aquí
+              # ❌ schema MISSING here
 ```
 
 ---
 
 ## 🚀 Script validateAndExecute.sh
 
-El script `scripts/validateAndExecute.sh` orquesta el flujo completo:
+The `scripts/validateAndExecute.sh` script orchestrates the whole flow:
 
 ```bash
 #!/bin/bash
 set -e
 
-# 1️⃣ Ejecuta Spectral para validar contratos
+# 1️⃣ Run Spectral to validate the contracts
 npx @stoplight/spectral-cli lint contracts/*.yaml
 EXIT_CODE=$?
 
-# 2️⃣ Si hay errores, BLOQUEA la ejecución
+# 2️⃣ If there are errors, BLOCK the run
 if [ $EXIT_CODE -ne 0 ]; then
     echo "❌ Contract validation failed. Tests will NOT run."
     exit $EXIT_CODE
 fi
 
-# 3️⃣ Si todo es válido, ejecuta pruebas funcionales
+# 3️⃣ If everything is valid, run the functional tests
 echo "✅ Contracts valid. Running Java API tests..."
 mvn test
 ```
 
-### Flujo de Ejecución
+### Execution flow
 
 ```
 ┌─────────────────────────────────────┐
@@ -160,14 +160,14 @@ mvn test
              ▼
 ┌─────────────────────────────────────┐
 │  Spectral Lint (contracts/*.yaml)   │
-│  - Valida contra ruleset.yaml       │
-│  - Verifica todas las reglas        │
+│  - Validates against ruleset.yaml   │
+│  - Checks every rule                │
 └────────────┬────────────────────────┘
              │
       ┌──────┴──────┐
       │             │
       ▼             ▼
-   ❌ ERROR      ✅ VÁLIDO
+   ❌ ERROR      ✅ VALID 
    (EXIT 1)     (EXIT 0)
       │             │
       ▼             ▼
@@ -181,71 +181,71 @@ mvn test
 
 ---
 
-## 📋 Pasos de Ejecución del Proyecto
+## 📋 How to run the project
 
-### 1️⃣ **Instalación de Dependencias**
+### 1️⃣ **Install dependencies**
 
 ```bash
-# Instalar dependencias Maven
+# Install Maven dependencies
 mvn clean install
 
-# Instalar Spectral CLI (si no está instalado)
+# Install the Spectral CLI (if not installed)
 npm install -g @stoplight/spectral-cli
 ```
 
-### 2️⃣ **Configuración del Entorno**
+### 2️⃣ **Configure the environment**
 
 ```bash
 
-# Editar .env con tus valores en la raiz del proyecto
-# BASE_URL=https://tu-api.com
+# Edit .env with your values at the project root
+# BASE_URL=https://your-api.com
 ```
 
-### 3️⃣ **Validación de Contratos**
+### 3️⃣ **Validate contracts**
 
 ```bash
-# Validar contratos manualmente
+# Validate contracts manually
 npx @stoplight/spectral-cli lint contracts/*.yaml
 
-# Validar un contrato específico
+# Validate a specific contract
 npx @stoplight/spectral-cli lint contracts/meetTheRules.yaml
 ```
 
-### 4️⃣ **Ejecución Completa (Validación + Tests)**
+### 4️⃣ **Full run (validation + tests)**
 
 ```bash
-# Ejecutar el script completo
+# Run the full script
 bash scripts/validateAndExecute.sh
 
-# O ejecutar Maven directamente (sin validación previa)
+# Or run Maven directly (without prior validation)
 mvn test
 ```
 
-### 5️⃣ **Generar Reportes Allure**
+### 5️⃣ **Generate Allure reports**
 
 ```bash
-# Los reportes se generan automáticamente en target/allure-report
-# Abrir en navegador
+# Reports are generated automatically in target/allure-report
+# Open in a browser
 open target/allure-report/index.html
 ```
 
 ---
 
-## 🛠️ Necesidades y Setup
+## 🛠️ Requirements and setup
 
-### Instalación Rápida
+### Quick install
 
 ```bash
-# 1. Instalar dependencias Maven
+# 1. Install Maven dependencies
 mvn clean install
 
-# 2. Instalar Spectral CLI
+# 2. Install the Spectral CLI
 npm install -g @stoplight/spectral-cli
 
-# 3. Configurar variables de entorno
+# 3. Configure environment variables
 cp .env.example .env
 
-# 4. Ejecutar validación + tests
+# 4. Run validation + tests
 bash scripts/validateAndExecute.sh
 ```
 
@@ -257,35 +257,35 @@ bash scripts/validateAndExecute.sh
 
 ### Error: "Could not find ./.env"
 ```bash
-# Solución: Copiar plantilla
+# Fix: copy the template
 cp .env.example .env
 ```
 
 ### Error: "spectral: command not found"
 ```bash
-# Solución: Instalar Spectral globalmente
+# Fix: install Spectral globally
 npm install -g @stoplight/spectral-cli
 ```
 
 ### Error: "Maven not found"
 ```bash
-# Solución: Instalar Maven o agregar a PATH
-# En macOS con Homebrew:
+# Fix: install Maven or add it to PATH
+# On macOS with Homebrew:
 brew install maven
 ```
 
-### Los tests fallan pero la validación pasó
+### Tests fail but validation passed
 ```bash
-# Verificar que BASE_URL en .env es correcto
+# Check that BASE_URL in .env is correct
 cat .env
 
-# Ejecutar con logs detallados
+# Run with detailed logs
 mvn test -X
 ```
 
 ---
 
-## 📚 Documentación Adicional
+## 📚 Further reading
 
 - [OpenAPI 3.0.3 Spec](https://spec.openapis.org/oas/v3.0.3)
 - [Spectral Documentation](https://docs.stoplight.io/docs/spectral/)
